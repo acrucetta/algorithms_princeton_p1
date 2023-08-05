@@ -11,10 +11,11 @@ public class Percolation {
   private final int bottomVirtualSite;
 
   private boolean isInputValid(int row, int col) {
-    if (row < 0 || row > arr.length) {
+
+    if (row < 0 || row >= arr.length) {
       return false;
     }
-    if (col < 0 || col > arr.length) {
+    if (col < 0 || col >= arr.length) {
       return false;
     }
     return true;
@@ -26,7 +27,7 @@ public class Percolation {
     }
     // Create an array of N x N with all the sites blocked
     // Blocked = 0; Open = 1
-    int[][] arr = new int[n][n];
+    this.arr = new int[n][n];
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         arr[i][j] = 0;
@@ -37,16 +38,6 @@ public class Percolation {
     this.uf = new WeightedQuickUnionUF(n * n + 2);
     this.topVirtualSite = n * n;
     this.bottomVirtualSite = n * n + 1;
-
-    // Now we will connect the top row to the top virtual site
-    for (int i = 0; i < n; i++) {
-      uf.union(topVirtualSite, i);
-    }
-
-    // Now we will connect the bottom row to the bottom virtual site
-    for (int i = 0; i < n; i++) {
-      uf.union(bottomVirtualSite, n * (n - 1) + i);
-    }
   }
 
   // opens the site (row, col) if it is not open already
@@ -61,25 +52,40 @@ public class Percolation {
       arr[row][col] = 1;
       open_sites++;
     }
+    // Now we will connect the site to the ones around it
+    // We will check if the site is open and then connect it
+    int[][] directions = new int[][] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    for (int[] direction : directions) {
+      int neighborRow = row + direction[0];
+      int neighborCol = col + direction[1];
+      if (!isInputValid(neighborRow, neighborCol)) {
+        continue;
+      }
+      if (isOpen(neighborRow, neighborCol)) {
+        uf.union(row * arr.length + col, neighborRow * arr.length + neighborCol);
+      }
+    }
+
+    // Now we will connect the site to the virtual sites
+    // If the site is in the top row, we will connect it to the top virtual site
+    if (row == 0) {
+      uf.union(col, topVirtualSite);
+    }
+
+    // If the site is in the bottom row, we will connect it to the bottom virtual
+    // site
+    if (row == arr.length - 1) {
+      uf.union(row * arr.length + col, bottomVirtualSite);
+    }
   }
 
   // is the site (row, col) open?
   public boolean isOpen(int row, int col) {
-    row = row - 1;
-    col = col - 1;
-    if (!isInputValid(row, col)) {
-      throw new IllegalArgumentException("row and col must be between 0 and N");
-    }
     return arr[row][col] == 1;
   }
 
   // is the site (row, col) full?
   public boolean isFull(int row, int col) {
-    row = row - 1;
-    col = col - 1;
-    if (!isInputValid(row, col)) {
-      throw new IllegalArgumentException("row and col must be between 0 and N");
-    }
     return arr[row][col] == 0;
   }
 
@@ -90,19 +96,18 @@ public class Percolation {
 
   // does the system percolate?
   public boolean percolates() {
-    // We want to iterate through the rows using the
-    // weighted quick union find algorithm; we will
-    // create a virtual site at the top
-    for (int i=0;i<arr.length;i++) {
-      // Percolate means, we check for each i,j whether the ones
-      // around it are open or not
+    // Check if the top virtual site is connected to the bottom virtual site
+    // We will use the WeightedQuickUnionUF object to check this
+    if (uf.find(topVirtualSite) == uf.find(bottomVirtualSite)) {
+      return true;
+    } else {
+      return false;
     }
-
-    // Then we will try to find if the bottom row
-    // is connected to the top row until
-    // we find no more connections or we reach the bottom
   }
 
   // test client (optional)
-  public static void main(String[] args)
+  public static void main(String[] args) {
+    // Create a Percolation object
+    Percolation p = new Percolation(5);
+  }
 }
