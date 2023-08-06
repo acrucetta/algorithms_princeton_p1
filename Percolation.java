@@ -8,7 +8,7 @@ public class Percolation {
   private final int topVirtualSite;
   private final int bottomVirtualSite;
 
-  public boolean validate(int row, int col) {
+  private boolean validate(int row, int col) {
     if (row < 1 || row > arr.length || col < 1 || col > arr.length) {
       return false;
     }
