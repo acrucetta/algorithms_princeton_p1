@@ -8,12 +8,8 @@ public class Percolation {
   private final int topVirtualSite;
   private final int bottomVirtualSite;
 
-  private boolean isInputValid(int row, int col) {
-
-    if (row < 0 || row >= arr.length) {
-      return false;
-    }
-    if (col < 0 || col >= arr.length) {
+  public boolean validate(int row, int col) {
+    if (row < 1 || row > arr.length || col < 1 || col > arr.length) {
       return false;
     }
     return true;
@@ -40,12 +36,12 @@ public class Percolation {
 
   // opens the site (row, col) if it is not open already
   public void open(int row, int col) {
-    // Adjust the rows and cols to start from 1
+    if (!validate(row, col)) {
+      throw new IllegalArgumentException("row and col must be between 1 and " + arr.length);
+    }
     row = row - 1;
     col = col - 1;
-    if (!isInputValid(row, col)) {
-      throw new IllegalArgumentException("row and col must be between 0 and N");
-    }
+
     if (arr[row][col] == 0) {
       arr[row][col] = 1;
       openSites++;
@@ -56,10 +52,10 @@ public class Percolation {
     for (int[] direction : directions) {
       int neighborRow = row + direction[0];
       int neighborCol = col + direction[1];
-      if (!isInputValid(neighborRow, neighborCol)) {
+      if (!validate(neighborRow + 1, neighborCol + 1)) {
         continue;
       }
-      if (isOpen(neighborRow, neighborCol)) {
+      if (arr[neighborRow][neighborCol] == 1) {
         uf.union(row * arr.length + col, neighborRow * arr.length + neighborCol);
       }
     }
@@ -67,7 +63,7 @@ public class Percolation {
     // Now we will connect the site to the virtual sites
     // If the site is in the top row, we will connect it to the top virtual site
     if (row == 0) {
-      uf.union(col, topVirtualSite);
+      uf.union(row * arr.length + col, topVirtualSite);
     }
 
     // If the site is in the bottom row, we will connect it to the bottom virtual
@@ -79,18 +75,22 @@ public class Percolation {
 
   // is the site (row, col) open?
   public boolean isOpen(int row, int col) {
-    if (!isInputValid(row, col)) {
-      throw new IllegalArgumentException("row and col must be between 0 and N");
+    if (!validate(row, col)) {
+      throw new IllegalArgumentException("row and col must be between 1 and " + arr.length);
     }
+    row = row - 1;
+    col = col - 1;
     return arr[row][col] == 1;
   }
 
   // is the site (row, col) full?
   public boolean isFull(int row, int col) {
-    if (!isInputValid(row, col)) {
-      throw new IllegalArgumentException("row and col must be between 0 and N");
+    if (!validate(row, col)) {
+      throw new IllegalArgumentException("row and col must be between 1 and " + arr.length);
     }
-    return arr[row][col] == 0;
+    row = row - 1;
+    col = col - 1;
+    return arr[row][col] == 0 && uf.find(row * arr.length + col) == uf.find(topVirtualSite);
   }
 
   // returns the number of open sites
@@ -100,12 +100,8 @@ public class Percolation {
 
   // does the system percolate?
   public boolean percolates() {
-    // Check if the top virtual site is connected to the bottom virtual site
-    // We will use the WeightedQuickUnionUF object to check this
-    if (uf.find(topVirtualSite) == uf.find(bottomVirtualSite)) {
-      return true;
-    }
-    return false;
+    // A system percolates if there's a full site in the bottom row
+    return uf.find(topVirtualSite) == uf.find(bottomVirtualSite);
   }
 
   // test client (optional)
