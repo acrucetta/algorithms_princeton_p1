@@ -7,8 +7,6 @@ public class PercolationStats {
   private double[] arrOpenSites;
   private double mean;
   private double stddev;
-  private double confidenceLo;
-  private double confidenceHi;
 
   // perform independent trials on an n-by-n grid
   public PercolationStats(int n, int trials) {
@@ -29,8 +27,6 @@ public class PercolationStats {
 
     this.mean = mean();
     this.stddev = stddev();
-    this.confidenceLo = confidenceLo();
-    this.confidenceHi = confidenceHi();
   }
 
   // sample mean of percolation threshold
@@ -64,8 +60,8 @@ public class PercolationStats {
   public static void main(String[] args) {
     // int n = Integer.parseInt(args[0]);
     // int trials = Integer.parseInt(args[1]);
-    int n = 20;
-    int trials = 25;
+    int n = 40;
+    int trials = 35;
 
     // Run the trials and print the results
     PercolationStats stats = new PercolationStats(n, trials);

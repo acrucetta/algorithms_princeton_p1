@@ -1,11 +1,9 @@
-import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
   private int[][] arr;
-  private int open_sites = 0;
+  private int openSites = 0;
   private final WeightedQuickUnionUF uf;
   private final int topVirtualSite;
   private final int bottomVirtualSite;
@@ -50,7 +48,7 @@ public class Percolation {
     }
     if (arr[row][col] == 0) {
       arr[row][col] = 1;
-      open_sites++;
+      openSites++;
     }
     // Now we will connect the site to the ones around it
     // We will check if the site is open and then connect it
@@ -81,17 +79,23 @@ public class Percolation {
 
   // is the site (row, col) open?
   public boolean isOpen(int row, int col) {
+    if (!isInputValid(row, col)) {
+      throw new IllegalArgumentException("row and col must be between 0 and N");
+    }
     return arr[row][col] == 1;
   }
 
   // is the site (row, col) full?
   public boolean isFull(int row, int col) {
+    if (!isInputValid(row, col)) {
+      throw new IllegalArgumentException("row and col must be between 0 and N");
+    }
     return arr[row][col] == 0;
   }
 
   // returns the number of open sites
   public int numberOfOpenSites() {
-    return open_sites;
+    return openSites;
   }
 
   // does the system percolate?
@@ -100,14 +104,11 @@ public class Percolation {
     // We will use the WeightedQuickUnionUF object to check this
     if (uf.find(topVirtualSite) == uf.find(bottomVirtualSite)) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   // test client (optional)
   public static void main(String[] args) {
-    // Create a Percolation object
-    Percolation p = new Percolation(5);
   }
 }
