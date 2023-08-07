@@ -90,7 +90,7 @@ public class Percolation {
     }
     row = row - 1;
     col = col - 1;
-    return arr[row][col] == 0 && uf.find(row * arr.length + col) == uf.find(topVirtualSite);
+    return arr[row][col] == 1 && uf.find(row * arr.length + col) == uf.find(topVirtualSite);
   }
 
   // returns the number of open sites
