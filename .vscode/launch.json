@@ -1,0 +1,49 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Percolation",
+      "request": "launch",
+      "mainClass": "homeworks.hw1.Percolation",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    },
+    {
+      "type": "java",
+      "name": "PercolationStats",
+      "request": "launch",
+      "mainClass": "homeworks.hw1.PercolationStats",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    },
+    {
+      "type": "java",
+      "name": "Deque",
+      "request": "launch",
+      "mainClass": "homeworks.hw2.Deque",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    },
+    {
+      "type": "java",
+      "name": "Permutation",
+      "request": "launch",
+      "mainClass": "homeworks.hw2.Permutation",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    },
+    {
+      "type": "java",
+      "name": "RandomizedQueue",
+      "request": "launch",
+      "mainClass": "homeworks.hw2.RandomizedQueue",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    }
+  ]
+}

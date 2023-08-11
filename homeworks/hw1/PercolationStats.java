@@ -1,4 +1,5 @@
-package week1.hw1;
+package homeworks.hw1;
+
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;

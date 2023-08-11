@@ -4,6 +4,7 @@
   ],
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
-    "utils/algs4.jar"
+    "utils/algs4.jar",
+    "homeworks/utils/algs4.jar"
   ]
 }

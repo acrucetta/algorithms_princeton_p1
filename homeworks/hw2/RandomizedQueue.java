@@ -1,3 +1,5 @@
+package homeworks.hw2;
+
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
   // construct an empty randomized queue
