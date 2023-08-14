@@ -80,7 +80,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
   }
 
   private class RandomizedIterator implements Iterator<Item> {
-    return;
+    private int i = N;
+
+    public boolean hasNext() {
+    }
+
+    public Item next() {
+    }
   }
 
   // unit testing (required)
