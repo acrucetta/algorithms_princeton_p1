@@ -1,5 +1,7 @@
 package homeworks.hw2;
 
+import java.util.Iterator;
+
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 /*
@@ -80,12 +82,23 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
   }
 
   private class RandomizedIterator implements Iterator<Item> {
-    private int i = N;
+    private int[] shuffledIndices;
+    private int current = 0;
+
+    public RandomizedIterator() {
+      shuffledIndices = new int[N];
+      for (int i = 0; i < N; i++) {
+        shuffledIndices[i] = i;
+      }
+      StdRandom.shuffle(shuffledIndices);
+    }
 
     public boolean hasNext() {
+      return current < N;
     }
 
     public Item next() {
+      return a[shuffledIndices[current++]];
     }
   }
 
