@@ -1,5 +1,3 @@
-package homeworks.hw2;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdIn;
@@ -42,7 +40,11 @@ public class Deque<Item> implements Iterable<Item> {
     first = new Node();
     first.item = item;
     first.next = oldfirst;
-    oldfirst.prev = first;
+    if (oldfirst != null) {
+      oldfirst.prev = first;
+    } else {
+      last = first;
+    }
     N++;
   }
 
@@ -55,7 +57,11 @@ public class Deque<Item> implements Iterable<Item> {
     last = new Node();
     last.item = item;
     oldlast.next = last;
-    last.prev = oldlast;
+    if (oldlast != null) {
+      last.prev = oldlast;
+    } else {
+      first = last;
+    }
     N++;
   }
 
@@ -100,6 +106,8 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     public Item next() {
+      if (!hasNext())
+        throw new NoSuchElementException("deque is empty");
       Item item = current.item;
       current = current.next;
       return item;

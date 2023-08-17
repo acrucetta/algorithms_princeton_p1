@@ -1,4 +1,3 @@
-package homeworks.hw2;
 
 import java.util.Iterator;
 
