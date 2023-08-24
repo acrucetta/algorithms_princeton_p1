@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "BruteCollinearPoints",
+      "request": "launch",
+      "mainClass": "homeworks.hw3.BruteCollinearPoints",
+      "projectName": "algorithms_princeton_p1_d73e3407"
+    },
+    {
+      "type": "java",
       "name": "Current File",
       "request": "launch",
       "mainClass": "${file}"
