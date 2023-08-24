@@ -1,41 +1,62 @@
 package homeworks.hw3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BruteCollinearPoints {
 
-  public int segments = 0;
-  public LineSegment[] lineSegments;
+  private final List<LineSegment> lineSegments = new ArrayList<>();
 
   public BruteCollinearPoints(Point[] points) // finds all line segments containing 4 points
   {
     if (points == null) {
       throw new IllegalArgumentException("points cannot be null");
     }
+    if (checkNulls(points)) {
+      throw new IllegalArgumentException("points cannot contain null values");
+    }
 
-    // Intialize the lineSegments array
-    lineSegments = new LineSegment[points.length];
-
-    // We want to iterate over the array every 4 points
-    for (int i = 0; i < points.length; i += 4) {
-      Point p1 = points[i];
-      System.out.println("p1: " + p1);
-      System.out.println("Current i: " + i);
-      if (p1.slopeTo(points[i + 1]) == p1.slopeTo(points[i + 2])
-          && p1.slopeTo(points[i + 1]) == p1.slopeTo(points[i + 3])) {
-        LineSegment lineSegment = new LineSegment(p1, points[i + 3]);
-        lineSegments[segments] = lineSegment;
-        segments++;
+    // We want to check every combination of 4 points in the array;
+    // we can do this by iterating through the array 4 times, each time
+    // starting at a different index
+    for (int i = 0; i < points.length; i += 1) {
+      for (int j = i + 1; j < points.length; j += 1) {
+        for (int k = j + 1; k < points.length; k += 1) {
+          for (int l = k + 1; l < points.length; l += 1) {
+            System.out.println("i: " + i + ", j: " + j + ", k: " + k + ", l: " + l);
+            // Ensure we don't go out of bounds
+            if (l >= points.length) {
+              break;
+            }
+            // Check if the points are collinear
+            if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[k]) &&
+                points[i].slopeTo(points[j]) == points[i].slopeTo(points[l])) {
+              // If they are, add them to the lineSegments array
+              lineSegments.add(new LineSegment(points[i], points[l]));
+            }
+          }
+        }
       }
     }
   }
 
+  private boolean checkNulls(Point[] points) {
+    for (int i = 0; i < points.length; i += 1) {
+      if (points[i] == null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public int numberOfSegments() // the number of line segments
   {
-    return segments;
+    return lineSegments.size();
   }
 
   public LineSegment[] segments() // the line segments
   {
-    return lineSegments;
+    return lineSegments.toArray(new LineSegment[lineSegments.size()]);
   }
 
   public static void main(String[] args) {
