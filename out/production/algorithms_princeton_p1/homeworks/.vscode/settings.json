@@ -1,0 +1,10 @@
+{
+  "java.project.sourcePaths": [
+    "."
+  ],
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "utils/algs4.jar",
+    "homeworks/utils/algs4.jar"
+  ]
+}

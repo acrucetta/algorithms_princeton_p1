@@ -13,6 +13,7 @@ public class Board {
     // string representation of this board
     public String toString() {
         StringBuilder s = new StringBuilder();
+        s.append(Tiles.length).append("\n");
         for (int[] tile : Tiles) {
             for (int j = 0; j < Tiles.length; j++) {
                 s.append(tile[j]).append(" ");
@@ -28,8 +29,27 @@ public class Board {
     }
 
     // number of tiles out of place
+    // This is calculated by noting what's the value
+    // of each tile and comparing it to the goal state.
+    // Assuming the goal state is an ordered array of
+    // numbers from 1 to n^2
     public int hamming() {
-        return 0;
+        int score = 0;
+        int n = Tiles.length;
+        int currentTile = 1;
+        for (int[] tile : Tiles)
+            for (int j = 0; j < Tiles.length; j++) {
+                if (tile[j] != currentTile) {
+                    score++;
+                }
+                // If we're at the last tile, we
+                // want to check the tile is 0
+                if (currentTile == n * n && tile[j] != 0) {
+                    score++;
+                }
+                currentTile++;
+            }
+        return score;
     }
 
     // sum of Manhattan distances between tiles and goal
@@ -59,7 +79,17 @@ public class Board {
 
     // unit testing (not graded)
     public static void main(String[] args) {
-        return ;
+        int[][] tiles = new int[3][3];
+        int currentTile = 1;
+        for (int[] tile : tiles)
+            for (int j = 0; j < tiles.length; j++) {
+                tile[j] = currentTile;
+                currentTile++;
+            }
+        tiles[2][2] = 0;
+        Board board = new Board(tiles);
+        System.out.println(board);
+        System.out.println(board.hamming());
     }
 
 }
