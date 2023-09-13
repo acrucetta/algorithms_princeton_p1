@@ -1,4 +1,6 @@
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
 
@@ -39,12 +41,13 @@ public class Board {
         int currentTile = 1;
         for (int[] tile : Tiles)
             for (int j = 0; j < Tiles.length; j++) {
-                if (tile[j] != currentTile) {
-                    score++;
+                if (currentTile == n * n) { // Last tile should be 0
+                    if (tile[j] != 0) {
+                        score++;
+                    }
+                    break;
                 }
-                // If we're at the last tile, we
-                // want to check the tile is 0
-                if (currentTile == n * n && tile[j] != 0) {
+                if (tile[j] != currentTile) { // Tile is not in the right place
                     score++;
                 }
                 currentTile++;
@@ -53,23 +56,108 @@ public class Board {
     }
 
     // sum of Manhattan distances between tiles and goal
+    // The manhattan distance is calculated with
+    // the sum of the vertical and horizontal distance
     public int manhattan() {
-        return 0;
+        int score = 0;
+        int n = Tiles.length;
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < Tiles.length; j++) {
+                int currentTile = Tiles[i][j];
+                if (currentTile == 0) { // Ignore the blank tile
+                    continue;
+                }
+                int goalRow = (currentTile - 1) / n;
+                int goalCol = (currentTile - 1) % n;
+                score += Math.abs(goalRow - i) + Math.abs(goalCol - j);
+            }
+        return score;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
-        return false;
+        return hamming() == 0;
     }
 
     // does this board equal y?
+    // We want to compare the tiles of the board
+    // one by one
     public boolean equals(Object y) {
-        return false;
+        int n = Tiles.length;
+        if (y == null || y.getClass() != this.getClass() || ((Board) y).dimension() != n) {
+            return false;
+        }
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < Tiles.length; j++) {
+                if (Tiles[i][j] != ((Board) y).Tiles[i][j]) {
+                    return false;
+                }
+            }
+        return true;
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
+        List<Board> neighborList = new ArrayList<>();
+
+        // We want to swap the current 0 to the directions allowed;
+        // then we add them to the neighborList
+        int[] zeroCoordinates = getZeroCoordinates();
+        assert zeroCoordinates != null;
+        int zeroRow = zeroCoordinates[0];
+        int zeroCol = zeroCoordinates[1];
+
+        // Based on the position of the zero, we can swap it
+        // to the following directions
+        if (zeroRow > 0) {
+            neighborList.add(swap(-1, 0));
+        }
+        if (zeroRow < Tiles.length - 1) {
+            neighborList.add(swap(1, 0));
+        }
+        if (zeroCol > 0) {
+            neighborList.add(swap(0, -1));
+        }
+        if (zeroCol < Tiles.length - 1) {
+            neighborList.add(swap(0, 1));
+        }
+        return neighborList;
+    }
+
+    // Swap to the given direction,
+    // we will use i and j coordinates
+    private Board swap(int i, int j) {
+        // Copy current board
+        int[][] copyTiles = deepCopy(Tiles);
+        int[] zeroCoordinates = getZeroCoordinates();
+        assert zeroCoordinates != null;
+        int zeroRow = zeroCoordinates[0];
+        int zeroCol = zeroCoordinates[1];
+
+        // Swap the zero with the given direction
+        int temp = copyTiles[zeroRow][zeroCol];
+        copyTiles[zeroRow][zeroCol] = copyTiles[zeroRow + i][zeroCol + j];
+        copyTiles[zeroRow + i][zeroCol + j] = temp;
+        return new Board(copyTiles);
+    }
+
+    private int[] getZeroCoordinates() {
+        int n = Tiles.length;
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < Tiles.length; j++) {
+                if (Tiles[i][j] == 0) {
+                    return new int[] {i, j};
+                }
+            }
         return null;
+    }
+
+    private int[][] deepCopy(int[][] tiles) {
+        int[][] copy = new int[Tiles.length][Tiles.length];
+        for (int i = 0; i < Tiles.length; i++) {
+            copy[i] = Tiles[i].clone();
+        }
+        return copy;
     }
 
     // a board that is obtained by exchanging any pair of tiles
@@ -90,6 +178,14 @@ public class Board {
         Board board = new Board(tiles);
         System.out.println(board);
         System.out.println(board.hamming());
+        System.out.println(board.manhattan());
+        System.out.println(board.isGoal());
+
+        // Test neighbors
+        System.out.println("Neighbors:");
+        for (Board neighbor : board.neighbors()) {
+            System.out.println(neighbor);
+        }
     }
 
 }
