@@ -162,7 +162,21 @@ public class Board {
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        return null;
+        int[][] clonedBoard = deepCopy(Tiles);
+
+        // Get two tiles that are not 0 and swap them
+        int i = 0; int j = 0;
+        while (clonedBoard[i][j] == 0 || clonedBoard[i][j + 1] == 0) {
+            j++;
+            if (j == Tiles.length - 1) {
+                i++;
+                j = 0;
+            }
+        }
+        int temp = clonedBoard[i][j];
+        clonedBoard[i][j] = clonedBoard[i][j + 1];
+        clonedBoard[i][j + 1] = temp;
+        return new Board(clonedBoard);
     }
 
     // unit testing (not graded)
@@ -186,6 +200,10 @@ public class Board {
         for (Board neighbor : board.neighbors()) {
             System.out.println(neighbor);
         }
+
+        // Test twin
+        System.out.println("Twin:");
+        System.out.println(board.twin());
     }
 
 }
