@@ -61,6 +61,7 @@ public class Solver {
         Solver firstInstance = new Solver(initialBoard);
         Board twinBoard = initialBoard.twin();
         Solver secondInstance = new Solver(twinBoard);
+        return firstInstance.moves() != -1;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
