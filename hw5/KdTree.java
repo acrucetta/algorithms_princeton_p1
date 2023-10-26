@@ -3,6 +3,8 @@ package homeworks.hw5;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
+import org.w3c.dom.css.Rect;
 
 public class KdTree {
     private Node root;
@@ -13,41 +15,39 @@ public class KdTree {
         public Node left;
         public Node right;
 
-        public Node(Point2D point) {
+        public Node(Point2D point, boolean isVertical) {
             this.point = point;
-            this.isVertical = true;
+            this.isVertical = isVertical;
             this.left = null;
             this.right = null;
         }
     }
 
     public KdTree() {
-        this.root = new Node(null);
+        this.root = new Node(null, true);
     }
     public void insert(Point2D p) {
         // We want to start from the root. We compare the x-coordinate (if the point to be inserted has a smaller x-coordinate
         // than the point at the root, go left; otherwise go right); then, we compare the y-coordinate (if the point to be inserted
         // has a smaller y-coordinate than the point in the node, go left; otherwise go right). Once we reach a null link,
         // we insert the new node there.
-        Node newNode = new Node(p);
-        newNode.point = p;
-
-        if (root == null) {
-            root = newNode;
+        if (root.point == null) {
+            root = new Node(p, true);
+            return;
         }
         Node current = root;
         while (current.point != null) {
             if (current.isVertical) {
                 if (p.x() < current.point.x()) {
                     if (current.left == null) {
-                        current.left = newNode;
+                        current.left = new Node(p, false);
                         break;
                     } else {
                         current = current.left;
                     }
                 } else {
                     if (current.right == null) {
-                        current.right = newNode;
+                        current.right = new Node(p, false);
                         break;
                     } else {
                         current = current.right;
@@ -56,14 +56,14 @@ public class KdTree {
             } else {
                 if (p.y() < current.point.y()) {
                     if (current.left == null) {
-                        current.left = newNode;
+                        current.left = new Node(p, true);
                         break;
                     } else {
                         current = current.left;
                     }
                 } else {
                     if (current.right == null) {
-                        current.right = newNode;
+                        current.right = new Node(p, true);
                         break;
                     } else {
                         current = current.right;
@@ -78,14 +78,18 @@ public class KdTree {
         // The vertical splits are red and the horizontal splits are blue.; we can use BFS to traverse the tree.
         Queue<Node> queue = new Queue<>();
         queue.enqueue(root);
+        RectHV bounds = new RectHV(0, 0, 1, 1);
+
         while (!queue.isEmpty()) {
             Node current = queue.dequeue();
             if (current.isVertical) {
                 // Draw a vertical line from the point to the left of the node to the point to the right of the node.
-                current.point.drawTo(new Point2D(current.point.x(), current.point.y() + 1));
+                StdDraw.setPenColor(StdDraw.RED);
+                StdDraw.line(current.point.x(), bounds.ymin(), current.point.x(), bounds.ymax());
             } else {
                 // Draw a horizontal line from the point below the node to the point above the node.
-                current.point.drawTo(new Point2D(current.point.x() + 1, current.point.y()));
+                StdDraw.setPenColor(StdDraw.BLUE);
+                StdDraw.line(bounds.xmin(), current.point.y(), bounds.xmax(), current.point.y());
             }
             if (current.left != null) {
                 queue.enqueue(current.left);
