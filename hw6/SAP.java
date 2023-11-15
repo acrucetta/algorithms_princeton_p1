@@ -5,7 +5,9 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class SAP {
@@ -17,11 +19,21 @@ public class SAP {
         this.digraph = G;
     }
 
-    // length of shortest ancestral path between v and w; -1 if no such path
-    // to find the shortest ancestral path between v and w, we will
-    // run a breadth-first search from v and w simultaneously.
-    // We will keep track of the shortest ancestral path found so far.
-    public int length(int v, int w) {
+    private static class BFSResult {
+        private int ancestor;
+        private int length;
+    }
+
+    private BFSResult bfs(int v, int w) {
+        if (v < 0 || v >= digraph.V() || w < 0 || w >= digraph.V()) {
+            throw new IllegalArgumentException();
+        }
+        if (v == w) {
+            BFSResult result = new BFSResult();
+            result.ancestor = v;
+            result.length = 0;
+            return result;
+        }
 
         boolean[] visitedV = new boolean[digraph.V()];
         Queue<Integer> queueV = new LinkedList<>();
@@ -74,23 +86,84 @@ public class SAP {
                     }
                 }
             }
+        }
+
+        BFSResult result = new BFSResult();
+        result.ancestor = (shortestPath == Integer.MAX_VALUE) ? -1 : shortestPath;
+        result.length = shortestPath;
+        return result;
     }
-        return shortestPath == Integer.MAX_VALUE ? -1 : shortestPath;
+
+    // length of shortest ancestral path between v and w; -1 if no such path
+    // to find the shortest ancestral path between v and w, we will
+    // run a breadth-first search from v and w simultaneously.
+    public int length(int v, int w) {
+        BFSResult result = bfs(v, w);
+        return result.length;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        return -1;
+        BFSResult result = bfs(v, w);
+        return result.ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        return -1;
+        List<int[]> visitedPairs = new ArrayList<>();
+        int shortestPath = Integer.MAX_VALUE;
+
+        for (int vertexV : v) {
+            for (int vertexW : w) {
+                if (vertexV == vertexW) {
+                    int distance = 0;
+                    if (distance < shortestPath) {
+                        shortestPath = distance;
+                    }
+                }
+                if (visitedPairs.contains(new int[]{vertexV, vertexW})) {
+                    continue;
+                }
+                visitedPairs.add(new int[]{vertexV, vertexW});
+                visitedPairs.add(new int[]{vertexW, vertexV});
+                int distance = length(vertexV, vertexW);
+                if (distance < shortestPath) {
+                    shortestPath = distance;
+                }
+            }
+        }
+        return shortestPath;
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        return -1;
+        List<int[]> visitedPairs = new ArrayList<>();
+        int shortestPath = Integer.MAX_VALUE;
+        int shortestAncestor = -1;
+
+        for (int vertexV : v) {
+            for (int vertexW : w) {
+                if (vertexV == vertexW) {
+                    int distance = 0;
+                    if (distance < shortestPath) {
+                        shortestPath = distance;
+                        ancestor = vertexV;
+                    }
+                }
+                if (visitedPairs.contains(new int[]{vertexV, vertexW})) {
+                    continue;
+                }
+                visitedPairs.add(new int[]{vertexV, vertexW});
+                visitedPairs.add(new int[]{vertexW, vertexV});
+                int distance = length(vertexV, vertexW);
+                int ancestorVW = ancestor(vertexV, vertexW);
+                if (distance < shortestPath) {
+                    shortestPath = distance;
+                    shortestAncestor = ancestorVW;
+                }
+            }
+        }
+        return shortestAncestor;
     }
 
     // do unit testing of this class
