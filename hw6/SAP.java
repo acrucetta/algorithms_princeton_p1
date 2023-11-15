@@ -22,7 +22,6 @@ public class SAP {
     // run a breadth-first search from v and w simultaneously.
     // We will keep track of the shortest ancestral path found so far.
     public int length(int v, int w) {
-        int shortestPath = Integer.MAX_VALUE;
 
         boolean[] visitedV = new boolean[digraph.V()];
         Queue<Integer> queueV = new LinkedList<>();
@@ -33,32 +32,50 @@ public class SAP {
         queueV.add(v);
         queueW.add(w);
 
-        int distanceV = 0;
-        int distanceW = 0;
+        int shortestPath = Integer.MAX_VALUE;
+        int[] distanceV = new int[digraph.V()];
+        int[] distanceW = new int[digraph.V()];
+
+        visitedW[w] = true;
+        visitedV[v] = true;
 
         while (!queueV.isEmpty() || !queueW.isEmpty()) {
+
+            // BFS from v
             if (!queueV.isEmpty()) {
                 int vertexV = queueV.remove();
-                visitedV[vertexV] = true;
-                distanceV++;
                 for (int neighbor : digraph.adj(vertexV)) {
                     if (!visitedV[neighbor]) {
                         queueV.add(neighbor);
+                        visitedV[neighbor] = true;
+                        distanceV[neighbor] = distanceV[vertexV] + 1;
                     }
                 }
             }
+
+            // BFS from w
             if (!queueW.isEmpty()) {
                 int vertexW = queueW.remove();
-                visitedW[vertexW] = true;
-                distanceW++;
                 for (int neighbor : digraph.adj(vertexW)) {
                     if (!visitedW[neighbor]) {
                         queueW.add(neighbor);
+                        visitedW[neighbor] = true;
+                        distanceW[neighbor] = distanceW[vertexW] + 1;
+                    }
+                }
+            }
+
+            // check if we have found a common ancestor
+            for (int i=0; i<digraph.V(); i++) {
+                if (visitedV[i] && visitedW[i]) {
+                    int distance = distanceV[i] + distanceW[i];
+                    if (distance < shortestPath) {
+                        shortestPath = distance;
                     }
                 }
             }
     }
-        return shortestPath;
+        return shortestPath == Integer.MAX_VALUE ? -1 : shortestPath;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
