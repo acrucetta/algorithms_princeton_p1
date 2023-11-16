@@ -1,21 +1,21 @@
 package homeworks.hw6;
 
+import com.sun.source.tree.Tree;
 import edu.princeton.cs.algs4.Digraph;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.*;
 
 public class WordNet {
 
-    private Map<Integer,String> synsets;
+    private final Map<Integer,String> synsets = new TreeMap<>();
+    private final Map<String, Set<Integer>> WordToIds = new TreeMap<>();
     private TreeSet<String> nouns;
     private Digraph digraph;
     private Map<Integer, List<Integer>> hypernyms;
+    private SAP sap;
 
     // constructor takes the name of the two input files (linearithmic or better)
     public WordNet(String synsets, String hypernyms) {
@@ -70,7 +70,9 @@ public class WordNet {
 
     // distance between nounA and nounB (defined below) (linear or better)
     public int distance(String nounA, String nounB) {
-            return -1;
+        // We will first find the synset ids of nounA and nounB.
+        // Then we will find the shortest ancestral path between
+
     }
 
     // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
