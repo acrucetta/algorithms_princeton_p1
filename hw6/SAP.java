@@ -147,7 +147,7 @@ public class SAP {
                     int distance = 0;
                     if (distance < shortestPath) {
                         shortestPath = distance;
-                        ancestor = vertexV;
+                        shortestAncestor = vertexV;
                     }
                 }
                 if (visitedPairs.contains(new int[]{vertexV, vertexW})) {
