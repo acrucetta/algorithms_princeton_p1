@@ -45,6 +45,8 @@ public class SAP {
         queueW.add(w);
 
         int shortestPath = Integer.MAX_VALUE;
+        int shortestAncestor = -1;
+
         int[] distanceV = new int[digraph.V()];
         int[] distanceW = new int[digraph.V()];
 
@@ -83,14 +85,15 @@ public class SAP {
                     int distance = distanceV[i] + distanceW[i];
                     if (distance < shortestPath) {
                         shortestPath = distance;
+                        shortestAncestor = i;
                     }
                 }
             }
         }
 
         BFSResult result = new BFSResult();
-        result.ancestor = (shortestPath == Integer.MAX_VALUE) ? -1 : shortestPath;
-        result.length = shortestPath;
+        result.ancestor = shortestAncestor;
+        result.length = (shortestPath == Integer.MAX_VALUE) ? -1 : shortestPath;
         return result;
     }
 
