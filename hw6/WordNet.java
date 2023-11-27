@@ -12,7 +12,7 @@ public class WordNet {
 
     private final Map<Integer,String> synsets = new TreeMap<>();
     private final Map<String, Integer> WordToIds = new TreeMap<>();
-    private TreeSet<String> nouns;
+    private final TreeSet<String> nouns = new TreeSet<>();
     private Map<Integer, List<Integer>> hypernyms;
     private final SAP sap;
 
@@ -37,10 +37,7 @@ public class WordNet {
             throw new RuntimeException(e);
         }
 
-        // Now we will load the hypernyms file and build a digraph.
-        // Each vertex is the id of a synset; each directed edge
-        // represents that w is a hypernym of v.
-        Digraph digraph = new Digraph(0);
+        Digraph digraph = new Digraph(this.synsets.size());
         try {
             Scanner scanner = new Scanner(new FileReader(hypernyms));
             while (scanner.hasNextLine()) {
@@ -75,8 +72,11 @@ public class WordNet {
     public int distance(String nounA, String nounB) {
         // We will first find the synset ids of nounA and nounB.
         // Then we will find the shortest ancestral path between
-        int idNounA = this.WordToIds.get(nounA);
-        int idNounB = this.WordToIds.get(nounB);
+        int idNounA = this.WordToIds.getOrDefault(nounA, -1);
+        int idNounB = this.WordToIds.getOrDefault(nounB, -1);
+        if (idNounA == -1 || idNounB == -1) {
+            throw new IllegalArgumentException("Noun not found");
+        }
         return sap.length(idNounA, idNounB);
     }
 
